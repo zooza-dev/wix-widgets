@@ -1,0 +1,17 @@
+{
+  "$schema": "https://dev.wix.com/wix-cli/schemas/custom-element.json",
+  "id": "1892ba60-5bec-4464-8823-5f3b74573099",
+  "name": "Video",
+  "width": {
+    "defaultWidth": 400,
+    "allowStretch": true
+  },
+  "height": {
+    "defaultHeight": 200
+  },
+  "installation": {
+    "autoAddToSite": true,
+    "essential": false
+  }
+}
+

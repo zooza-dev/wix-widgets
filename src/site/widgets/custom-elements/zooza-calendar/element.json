@@ -1,0 +1,16 @@
+{
+  "$schema": "https://dev.wix.com/wix-cli/schemas/custom-element.json",
+  "id": "1a671f57-3322-4f6d-b9f6-78fa365f957f",
+  "name": "Calendar",
+  "width": {
+    "defaultWidth": 400,
+    "allowStretch": true
+  },
+  "height": {
+    "defaultHeight": 200
+  },
+  "installation": {
+    "autoAddToSite": true,
+    "essential": false
+  }
+}

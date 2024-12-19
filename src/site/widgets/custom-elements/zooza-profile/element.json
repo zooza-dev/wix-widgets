@@ -1,0 +1,17 @@
+{
+  "$schema": "https://dev.wix.com/wix-cli/schemas/custom-element.json",
+  "id": "6f3ffacd-f867-494b-b95c-3a97343f693c",
+  "name": "Profile",
+  "width": {
+    "defaultWidth": 400,
+    "allowStretch": true
+  },
+  "height": {
+    "defaultHeight": 200
+  },
+  "installation": {
+    "autoAddToSite": true,
+    "essential": false
+  }
+}
+

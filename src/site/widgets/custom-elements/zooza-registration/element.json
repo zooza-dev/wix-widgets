@@ -1,0 +1,17 @@
+{
+  "$schema": "https://dev.wix.com/wix-cli/schemas/custom-element.json",
+  "id": "47d7f4e0-af85-47d0-b595-3f019f18092a",
+  "name": "Registration",
+  "width": {
+    "defaultWidth": 400,
+    "allowStretch": true
+  },
+  "height": {
+    "defaultHeight": 200
+  },
+  "installation": {
+    "autoAddToSite": true,
+    "essential": false
+  }
+}
+

@@ -10,7 +10,8 @@
     "@wix/secrets": "^1.0.44",
     "@wix/wix-ui-icons-common": "^3.0.0",
     "react-to-webcomponent": "^2.0.0",
-    "wix-data": "^0.0.1-security"
+    "wix-data": "^0.0.1-security",
+    "wix-location": "^1.0.1"
   },
   "devDependencies": {
     "@types/react": "^16.0.0",

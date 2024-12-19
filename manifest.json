@@ -1,5 +1,35 @@
 {
-  "oauth": {
-    "scopes": ["manage_secrets"]
-  }
+  "app": {
+    "id": "f5bc05d8-273e-4ea1-a079-c9e3044d86ac",
+    "name": "Zooza"
+  },
+  "widgets": [
+    {
+      "id": "1a671f57-3322-4f6d-b9f6-78fa365f957f",
+      "title": "Calendar",
+      "description": "Add a calendar to your site.",
+      "component": {
+        "type": "custom",
+        "customElementId": "1a671f57-3322-4f6d-b9f6-78fa365f957f"
+      }
+    },
+    {
+      "id": "6f3ffacd-f867-494b-b95c-3a97343f693c",
+      "title": "Profile",
+      "description": "Add a profile to your site.",
+      "component": {
+        "type": "custom",
+        "customElementId": "6f3ffacd-f867-494b-b95c-3a97343f693c"
+      }
+    },
+    {
+      "id": "47d7f4e0-af85-47d0-b595-3f019f18092a",
+      "title": "Registration",
+      "description": "Add a registration form to your site.",
+      "component": {
+        "type": "custom",
+        "customElementId": "47d7f4e0-af85-47d0-b595-3f019f18092a"
+      }
+    }
+  ]
 }

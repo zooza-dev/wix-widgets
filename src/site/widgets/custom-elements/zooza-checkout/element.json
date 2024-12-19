@@ -1,0 +1,17 @@
+{
+  "$schema": "https://dev.wix.com/wix-cli/schemas/custom-element.json",
+  "id": "a60829fb-01b6-4ec1-9db9-b16664472bb8",
+  "name": "Checkout",
+  "width": {
+    "defaultWidth": 400,
+    "allowStretch": true
+  },
+  "height": {
+    "defaultHeight": 200
+  },
+  "installation": {
+    "autoAddToSite": true,
+    "essential": false
+  }
+}
+
