@@ -2,5 +2,4 @@
   "$schema": "https://dev.wix.com/wix-cli/schemas/wix-config.json",
   "appId": "f5bc05d8-273e-4ea1-a079-c9e3044d86ac",
   "projectId": "zooza-plugin"
-
 }

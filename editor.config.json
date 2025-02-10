@@ -1,0 +1,11 @@
+{
+  "widgets": [
+    {
+      "widgetId": "47d7f4e0-af85-47d0-b595-3f019f18092a",
+      "displayName": "Zooza registration form",
+      "category": "Custom Widgets",
+      "icon": "https://www.zooza.online/wp-content/uploads/2023/05/logo_zooza_small.png",
+      "description": "Registration form"
+    }
+  ]
+}

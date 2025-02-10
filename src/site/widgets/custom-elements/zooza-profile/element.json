@@ -12,6 +12,11 @@
   "installation": {
     "autoAddToSite": true,
     "essential": false
+  },
+  "behaviors": {
+    "dashboard": {
+      "dashboardPageComponentId": "de9b33ae-05cc-415b-9982-9bd21c1d9d5a"
+    }
   }
 }
 
