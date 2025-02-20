@@ -7,66 +7,63 @@ type Props = {
 };
 
 export const WidgetComponent: FC<Props> = ({ api_key, version, type }) => {
-    const [apiKey, setApiKey] = useState<string | undefined>();
+    const [apiKey, setApiKey] = useState<string | undefined>(api_key);
 
     useEffect(() => {
-        const el = document.querySelector("#project-token");
-
-        // @ts-ignore
-        const detectedApiKey =
-            //el?.dataset.projectToken ||
-            api_key;
-        setApiKey(detectedApiKey);
-
         const loadZoozaWidgetScript = () => {
-            if (!document.getElementById("zooza-widget-script") && detectedApiKey) {
-                const script = document.createElement("script");
-                script.type = "text/javascript";
-                script.async = true;
-                script.id = "zooza-widget-script";
-                document.body.setAttribute("data-zooza-api-url", "https://api.zooza.app");
+            if (!apiKey) return;
 
-                const url = `https://api.zooza.app/widgets/${version}/`;
-                script.src = `${url}?ref=${encodeURIComponent(window.location.href)}&type=${type}`;
+            const existingScript = document.getElementById("zooza-widget-script");
+            if (existingScript && existingScript.getAttribute("data-loaded") === "true") return;
 
-                const embedder = document.getElementById(detectedApiKey);
-                if (embedder) {
-                    embedder.appendChild(script);
+            const script = document.createElement("script");
+            script.type = "text/javascript";
+            script.async = true;
+            script.id = "zooza-widget-script";
+            script.setAttribute("data-loaded", "true");
 
-                    // Inline script for route handling
-                    const inlineScript = document.createElement("script");
-                    inlineScript.textContent = `
-                        console.log('External script loaded');
-                        function onRouteChange(location) {
-                            console.log('Detected Wix route change:', location);
-                            const customRouteEvent = new CustomEvent('wix-route-change', {
-                                detail: { path: location.pathname, query: location.search, hash: location.hash }
-                            });
-                            window.dispatchEvent(customRouteEvent);
-                        }
-                        function attachRouteChangeHandler() {
-                            document.querySelectorAll('.zooza a').forEach((anchor) => {
-                                if (!anchor.hasAttribute('data-route-handler')) {
-                                    anchor.setAttribute('data-route-handler', 'true');
-                                    anchor.addEventListener('click', (event) => {
-                                        const href = anchor.getAttribute('href');
-                                        if (!href || href.startsWith('#')) return;
-                                        const url = new URL(href, window.location.origin);
-                                        if (url.origin === window.location.origin) {
-                                            event.preventDefault();
-                                            window.history.pushState(null, '', url);
-                                            onRouteChange(url);
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                        attachRouteChangeHandler();
-                        const observer = new MutationObserver(() => attachRouteChangeHandler());
-                        observer.observe(document.body, { childList: true, subtree: true });
-                    `;
-                    document.body.appendChild(inlineScript);
-                }
+            const currentValue = document.body.getAttribute("data-zooza-api-url");
+            document.body.setAttribute("data-zooza-api-url", currentValue && currentValue.trim() ? currentValue : "https://uk.api.zooza.app");
+
+
+
+            script.src = `https://api.zooza.app/widgets/${version}/?ref=${encodeURIComponent(
+                window.location.href
+            )}&type=${type}`;
+
+            const embedder = document.querySelector(`[data-widget-id="zooza"]`);
+            if (embedder) {
+                embedder.appendChild(script);
+
+                // Inline route handling script
+                const inlineScript = document.createElement("script");
+                inlineScript.textContent = `
+          function onRouteChange(location) {
+              const customRouteEvent = new CustomEvent('wix-route-change', {
+                  detail: { path: location.pathname, query: location.search, hash: location.hash }
+              });
+              window.dispatchEvent(customRouteEvent);
+          }
+          function attachRouteChangeHandler() {
+              document.querySelectorAll('.zooza a').forEach((anchor) => {
+                  if (!anchor.hasAttribute('data-route-handler')) {
+                      anchor.setAttribute('data-route-handler', 'true');
+                      anchor.addEventListener('click', (event) => {
+                          const href = anchor.getAttribute('href');
+                          if (!href || href.startsWith('#') || href.includes('://')) return;
+                          event.preventDefault();
+                          const url = new URL(href, window.location.origin);
+                          window.history.pushState(null, '', url);
+                          onRouteChange(url);
+                      });
+                  }
+              });
+          }
+          attachRouteChangeHandler();
+          const observer = new MutationObserver(() => attachRouteChangeHandler());
+          observer.observe(document.body, { childList: true, subtree: true });
+        `;
+                document.body.appendChild(inlineScript);
             }
         };
 
@@ -84,17 +81,16 @@ export const WidgetComponent: FC<Props> = ({ api_key, version, type }) => {
             });
         });
 
-        if (detectedApiKey) {
-            const embedder = document.getElementById(detectedApiKey);
-            if (embedder) {
-                observer.observe(embedder, { childList: true, subtree: true });
-            }
+        const embedder = document.querySelector(`[data-widget-id="zooza"]`);
+        if (embedder) {
+            observer.observe(embedder, { childList: true, subtree: true });
         }
 
         return () => {
+            document.removeEventListener("DOMContentLoaded", loadZoozaWidgetScript);
             observer.disconnect();
         };
-    }, [api_key, version, type]);
+    }, [apiKey, version, type]);
 
     if (!apiKey) {
         return <div>Loading...</div>;

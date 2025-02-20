@@ -12,7 +12,8 @@ const CustomElement: FC<Props> = (props) => {
 
 
     return (
-        <WidgetComponent api_key={props.displayName} type={"registration_new"} version={"v1"}  />
+        <WidgetComponent api_key={props.displayName} type={"profile"}
+                         version={"v1"}/>
     );
 };
 
