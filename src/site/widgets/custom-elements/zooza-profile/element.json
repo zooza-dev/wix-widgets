@@ -1,0 +1,16 @@
+{
+  "$schema": "https://dev.wix.com/wix-cli/schemas/custom-element.json",
+  "id": "9562668a-891b-4f03-84e0-6a303854af72",
+  "name": "Zooza profile",
+  "width": {
+    "defaultWidth": 450,
+    "allowStretch": true
+  },
+  "height": {
+    "defaultHeight": 250
+  },
+  "installation": {
+    "autoAddToSite": true
+  }
+}
+

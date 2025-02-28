@@ -1,0 +1,16 @@
+{
+  "$schema": "https://dev.wix.com/wix-cli/schemas/custom-element.json",
+  "id": "58f5f422-7a6c-49de-8f2a-9695d8f148a8",
+  "name": "Map",
+  "width": {
+    "defaultWidth": 450,
+    "allowStretch": true
+  },
+  "height": {
+    "defaultHeight": 250
+  },
+  "installation": {
+    "autoAddToSite": true
+  }
+}
+

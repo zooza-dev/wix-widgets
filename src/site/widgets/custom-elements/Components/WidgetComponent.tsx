@@ -4,9 +4,10 @@ type Props = {
     api_key: string;
     version: string;
     type: string;
+    api_url: string;
 };
 
-export const WidgetComponent: FC<Props> = ({ api_key, version, type }) => {
+export const WidgetComponent: FC<Props> = ({ api_key, version, type, api_url = "api.zooza.app" }) => {
     const [apiKey, setApiKey] = useState<string | undefined>(api_key);
 
     useEffect(() => {
@@ -23,11 +24,11 @@ export const WidgetComponent: FC<Props> = ({ api_key, version, type }) => {
             script.setAttribute("data-loaded", "true");
 
             const currentValue = document.body.getAttribute("data-zooza-api-url");
-            document.body.setAttribute("data-zooza-api-url", currentValue && currentValue.trim() ? currentValue : "https://uk.api.zooza.app");
+            document.body.setAttribute("data-zooza-api-url", currentValue && currentValue.trim() ? currentValue : api_url);
 
 
 
-            script.src = `https://api.zooza.app/widgets/${version}/?ref=${encodeURIComponent(
+            script.src = `${api_url}/widgets/${version}/?ref=${encodeURIComponent(
                 window.location.href
             )}&type=${type}`;
 

@@ -6,13 +6,14 @@ import {WidgetComponent} from "../Components/WidgetComponent";
 
 interface Props {
     displayName: string;
+    apiURL: string;
 }
 
 const CustomElement: FC<Props> = (props) => {
 
 
     return (
-        <WidgetComponent api_key={props.displayName} type={"calendar"} version={"v2"}  />
+        <WidgetComponent api_key={props.displayName} type={"calendar"} version={"v2"} api_url={props.apiURL}  />
     );
 };
 
@@ -23,6 +24,7 @@ const customElement = reactToWebComponent(
     {
         props: {
             displayName: 'string',
+            apiURL:'string',
         },
     }
 );

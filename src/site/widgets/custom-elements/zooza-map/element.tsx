@@ -13,7 +13,11 @@ const CustomElement: FC<Props> = (props) => {
 
 
     return (
-        <WidgetComponent api_key={props.displayName} type={"checkout"} version={"v2"} api_url={props.apiURL}  />
+        <>
+            {/*<div>{props.displayName}</div>*/}
+            <WidgetComponent api_key={props.displayName} type={"map"} version={"v2"} api_url={props.apiURL}  />
+        </>
+
     );
 };
 

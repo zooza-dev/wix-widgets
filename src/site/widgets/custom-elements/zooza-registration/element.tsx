@@ -1,23 +1,24 @@
 import React, { type FC } from 'react';
 import ReactDOM from 'react-dom';
 import reactToWebComponent from 'react-to-webcomponent';
-import styles from './element.module.css';
 import {WidgetComponent} from "../Components/WidgetComponent";
 
 
 
 interface Props {
   displayName?: string;
+  apiURL: string;
+
 }
 
 const CustomElement: FC<Props> = ({
-  displayName
+  displayName, apiURL,
 }) => {
 
 
   return (
     <>
-        <WidgetComponent api_key={displayName as string} type={"registration_new"} version={"v1"}  />
+        <WidgetComponent api_key={displayName as string} type={"registration_new"} version={"v1"} api_url={apiURL}  />
     </>
   );
 };
@@ -28,7 +29,7 @@ const customElement = reactToWebComponent(
   ReactDOM as any,
   {
     props: {
-      displayName: 'string',
+      displayName: 'string', apiURL: 'string'
     },
   }
 );
