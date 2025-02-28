@@ -27,7 +27,7 @@
   "scripts": {
     "wix": "wix",
     "build": "wix app build",
-    "create-version": "wix app create-version",
+    "release": "wix app release",
     "dev": "wix app dev",
     "preview": "wix app preview",
     "serve": "wix app serve",
