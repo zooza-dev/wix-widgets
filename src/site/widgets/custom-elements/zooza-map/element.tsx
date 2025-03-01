@@ -9,13 +9,17 @@ interface Props {
     apiURL: string;
 }
 
-const CustomElement: FC<Props> = (props) => {
+const CustomElement: FC<Props> = ({
+                                      displayName,
+                                      apiURL
+
+                                  }) => {
 
 
     return (
         <>
-            {/*<div>{props.displayName}</div>*/}
-            <WidgetComponent api_key={props.displayName} type={"map"} version={"v2"} api_url={props.apiURL}  />
+
+            <WidgetComponent api_key={displayName} type={"map"} version={"v2"} api_url={apiURL}  />
         </>
 
     );
