@@ -15,6 +15,7 @@ const CustomElement: FC<Props> = ({
 
                                   }) => {
 
+    console.info("hello word");
 
     return (
         <>

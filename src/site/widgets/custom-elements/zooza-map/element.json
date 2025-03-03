@@ -1,6 +1,6 @@
 {
   "$schema": "https://dev.wix.com/wix-cli/schemas/custom-element.json",
-  "id": "58f5f422-7a6c-49de-8f2a-9695d8f148a8",
+  "id": "d96bd9ac-9ea0-4ab4-9772-27a14d873bfe",
   "name": "Map",
   "width": {
     "defaultWidth": 450,
@@ -11,6 +11,12 @@
   },
   "installation": {
     "autoAddToSite": true
-  }
+  },
+  "presets": [
+    {
+      "id": "6c4ebf99-2233-4b39-937d-31eaec7cec34",
+      "thumbnailUrl": "../../../../assets/zooza-map/thumbnail.png"
+    }
+  ]
 }
 

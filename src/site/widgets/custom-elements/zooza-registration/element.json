@@ -1,7 +1,7 @@
 {
   "$schema": "https://dev.wix.com/wix-cli/schemas/custom-element.json",
-  "id": "e5e59f38-78dc-4144-b6d1-21cc51ed356e",
-  "name": "Zooza registration",
+  "id": "03b2abdb-0e50-4e1c-8aad-b2778f5dba63",
+  "name": "Registration",
   "width": {
     "defaultWidth": 450,
     "allowStretch": true
@@ -10,7 +10,13 @@
     "defaultHeight": 250
   },
   "installation": {
-    "autoAddToSite": true
-  }
+    "autoAddToSite": false
+  },
+  "presets": [
+    {
+      "id": "e8cbd987-6d13-470b-8ef0-089ba62e04f6",
+      "thumbnailUrl": "../../../../assets/zooza-registration/thumbnail.png"
+    }
+  ]
 }
 

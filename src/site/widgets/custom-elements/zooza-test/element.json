@@ -1,7 +1,7 @@
 {
   "$schema": "https://dev.wix.com/wix-cli/schemas/custom-element.json",
-  "id": "16de9ced-4a3e-4594-b8a7-2f5ef684036c",
-  "name": "Calendar",
+  "id": "02016d03-b5be-4799-ab0d-2a3f038aa25a",
+  "name": "Test",
   "width": {
     "defaultWidth": 450,
     "allowStretch": true
@@ -10,12 +10,12 @@
     "defaultHeight": 250
   },
   "installation": {
-    "autoAddToSite": true
+    "autoAddToSite": false
   },
   "presets": [
     {
-      "id": "38f308cd-9efc-47e8-8865-62afcad58e09",
-      "thumbnailUrl": "../../../../assets/zooza-calendar/thumbnail.png"
+      "id": "942ac71d-41d1-4433-a1e5-83d4c0db2b51",
+      "thumbnailUrl": "../../../../assets/zooza-test/thumbnail.png"
     }
   ]
 }

@@ -1,22 +1,22 @@
 {
   "$schema": "https://dev.wix.com/wix-cli/schemas/custom-element.json",
-  "id": "1892ba60-5bec-4464-8823-5f3b74573099",
+  "id": "20c1fb92-8719-479d-8fe9-7feaa4b573b8",
   "name": "Video",
   "width": {
-    "defaultWidth": 400,
+    "defaultWidth": 450,
     "allowStretch": true
   },
   "height": {
-    "defaultHeight": 200
+    "defaultHeight": 250
   },
   "installation": {
-    "autoAddToSite": true,
-    "essential": false
+    "autoAddToSite": true
   },
-  "behaviors": {
-    "dashboard": {
-      "dashboardPageComponentId": "de9b33ae-05cc-415b-9982-9bd21c1d9d5a"
+  "presets": [
+    {
+      "id": "1af6ffa0-8549-4d7e-aba5-f265805fe307",
+      "thumbnailUrl": "../../../../assets/zooza-video/thumbnail.png"
     }
-  }
+  ]
 }
 

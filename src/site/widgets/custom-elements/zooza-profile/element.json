@@ -1,7 +1,7 @@
 {
   "$schema": "https://dev.wix.com/wix-cli/schemas/custom-element.json",
-  "id": "9562668a-891b-4f03-84e0-6a303854af72",
-  "name": "Zooza profile",
+  "id": "b982d8af-d5fd-45e0-898f-e127b6caeb8c",
+  "name": "Profile",
   "width": {
     "defaultWidth": 450,
     "allowStretch": true
@@ -11,6 +11,12 @@
   },
   "installation": {
     "autoAddToSite": true
-  }
+  },
+  "presets": [
+    {
+      "id": "15e88ff2-7a55-4da2-9002-dda13a3958e6",
+      "thumbnailUrl": "../../../../assets/zooza-profile/thumbnail.png"
+    }
+  ]
 }
 

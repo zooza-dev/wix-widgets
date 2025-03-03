@@ -1,19 +1,23 @@
 import React, {type FC} from 'react';
 import ReactDOM from 'react-dom';
 import reactToWebComponent from 'react-to-webcomponent';
-import {WidgetComponent} from "./site/widgets/custom-elements/Components/WidgetComponent";
+import {WidgetComponent} from "../Components/WidgetComponent";
 
 
 interface Props {
     displayName: string;
+    apiURL: string;
 }
 
-const CustomElement: FC<Props> = (props) => {
+const CustomElement: FC<Props> = ({
+                                      displayName,
+                                      apiURL
+
+                                  }) => {
 
 
     return (
-        <WidgetComponent api_key={props.displayName} type={"profile"}
-                         version={"v1"}/>
+        <WidgetComponent api_key={displayName} type={"checkout"} version={"v2"} api_url={apiURL}  />
     );
 };
 
@@ -24,6 +28,7 @@ const customElement = reactToWebComponent(
     {
         props: {
             displayName: 'string',
+            apiURL:'string',
         },
     }
 );

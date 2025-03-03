@@ -17,7 +17,7 @@ const Panel: FC = () => {
   useEffect(() => {
     widget.getProp("display-name").then((name) => setName(name || "Zooza"));
     widget.getProp("api-url").then((url) => setApiURL(url || "https://api.zooza.app")); // ✅ Set a valid default
-  }, [setName, setApiURL]);
+  }, []);
 
   // ✅ Define API options (Database Sections)
   const apis = [
