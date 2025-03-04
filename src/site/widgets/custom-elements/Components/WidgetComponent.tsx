@@ -4,75 +4,93 @@ type Props = {
     api_key: string;
     version: string;
     type: string;
-    api_url: string;
+    api_url?: string;  // ✅ Make `api_url` optional
 };
 
 export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_url }) => {
-    const [currentHref, setCurrentHref] = useState(window.location.href);
-
-    // ✅ Track URL changes and trigger widget reloading
-    useEffect(() => {
-        const handleURLChange = () => setCurrentHref(window.location.href);
-
-        window.addEventListener("popstate", handleURLChange);
-        window.addEventListener("pushstate", handleURLChange);
-        window.addEventListener("replacestate", handleURLChange);
-
-        return () => {
-            window.removeEventListener("popstate", handleURLChange);
-            window.removeEventListener("pushstate", handleURLChange);
-            window.removeEventListener("replacestate", handleURLChange);
-        };
-    }, []);
+    const [retryCount, setRetryCount] = useState(0);
+    const [finalApiUrl, setFinalApiUrl] = useState(api_url || "https://api.zooza.app"); // ✅ Default API URL
 
     useEffect(() => {
-        console.log("🔄 URL changed:", currentHref);
-
-        const container = document.getElementById("zooza-widget-container");
-
-        if (container) {
-            console.log("🗑️ Removing old widget...");
-            container.innerHTML = ""; // Clear all previous content
+        if (!api_url) {
+            console.warn("⚠️ `api_url` is missing! Using fallback:", finalApiUrl);
+            if (window.location.hostname.endsWith(".co.uk")) {
+                setFinalApiUrl("https://uk.api.zooza.app");
+            }
+            setFinalApiUrl("https://api.zooza.app"); // ✅ Ensure it has a default value
         }
+    }, [api_url]);
 
-        // ✅ Remove any existing script
-        const existingScript = document.getElementById("zooza-widget-script");
-        if (existingScript) {
-            console.log("🗑️ Removing old script...");
-            existingScript.remove();
-        }
+    useEffect(() => {
+        const MAX_RETRIES = 3;
+        const loadWidget = () => {
+            console.log(`🔄 Attempting to load widget (Try ${retryCount + 1}/${MAX_RETRIES})`);
+            console.log("API Key:", api_key);
+            console.log("API URL:", finalApiUrl);
 
-        console.log("✅ Creating new widget script...");
+            if (!api_key || !finalApiUrl) {
+                console.error("❌ Missing API key or API URL. Widget cannot be loaded.");
+                return;
+            }
 
-        // ✅ Create new script tag for widget
-        const scriptTag = document.createElement("script");
-        scriptTag.id = "zooza-widget-script";
-        scriptTag.setAttribute("data-version", version);
-        scriptTag.setAttribute("data-widget-id", "zooza");
-        scriptTag.type = "text/javascript";
+            const container = document.getElementById("zooza-widget-container");
+            if (!container) {
+                console.error("❌ Widget container not found!");
+                return;
+            }
 
-        if (container) {
+            // 🗑️ Remove previous widget before adding a new one
+            container.innerHTML = "";
+
+            // ✅ Remove old script to prevent duplication
+            document.querySelectorAll("script[data-widget-id='zooza']").forEach((oldScript) => {
+                console.log("🗑️ Removing old widget script...");
+                oldScript.remove();
+            });
+
+            // ✅ Create a new script tag for the widget
+            const scriptTag = document.createElement("script");
+            scriptTag.id = `widget-script-${api_key}`;
+            scriptTag.setAttribute("data-version", version);
+            scriptTag.setAttribute("data-widget-id", "zooza");
+            scriptTag.setAttribute("data-zooza-api-url", finalApiUrl);
+            scriptTag.type = "text/javascript";
+
             container.appendChild(scriptTag);
-        }
 
-        // ✅ Load the widget script dynamically
-        const widgetScript = document.createElement("script");
-        widgetScript.id = "zooza-dynamic-script";
-        widgetScript.type = "text/javascript";
-        widgetScript.async = true;
-        widgetScript.src = `${api_url}/widgets/${version}/?type=${type}&ref=${encodeURIComponent(currentHref)}`;
+            // ✅ Load widget dynamically
+            const widgetScript = document.createElement("script");
+            widgetScript.type = "text/javascript";
+            widgetScript.async = true;
+            document.body.setAttribute("data-zooza-api-url", finalApiUrl);
+            widgetScript.src = `${finalApiUrl}/widgets/${version}/?type=${type}&ref=${encodeURIComponent(window.location.href)}&v=${new Date().getTime()}`;
 
-        // ✅ Ensure script executes correctly
-        widgetScript.onload = () => console.log("✅ Widget script loaded!");
-        widgetScript.onerror = (err) => console.error("❌ Widget script failed to load:", err);
+            widgetScript.onload = () => {
+                console.log("✅ Widget successfully loaded!");
+                setRetryCount(0); // Reset retry count on success
+            };
 
-        scriptTag.parentNode?.insertBefore(widgetScript, scriptTag.nextSibling);
+            widgetScript.onerror = (err) => {
+                console.error("❌ Failed to load widget script:", err);
+                console.warn("⚠️ API URL issue detected:", finalApiUrl);
+            };
 
-        return () => {
-            console.log("🗑️ Cleaning up widget before unmount...");
-            widgetScript.remove();
+            scriptTag.parentNode?.insertBefore(widgetScript, scriptTag.nextSibling);
+
+            // ✅ Check if widget appears, retry if needed
+            setTimeout(() => {
+                if (!container.innerHTML.trim() && retryCount < MAX_RETRIES) {
+                    console.warn(`⚠️ Widget not rendered, retrying... (${retryCount + 1}/${MAX_RETRIES})`);
+                    setRetryCount((prev) => prev + 1);
+                } else if (retryCount >= MAX_RETRIES) {
+                    console.error("❌ Max retries reached. Widget failed to load.");
+                }
+            }, 1500); // Wait 1.5 seconds before checking
+
         };
-    }, [currentHref, api_key, version, type, api_url]);
+
+        loadWidget();
+    }, [api_key, version, type, finalApiUrl, retryCount,document.body.getAttribute("data-zooza-api-url")]);
 
     return <div id="zooza-widget-container"></div>;
 };

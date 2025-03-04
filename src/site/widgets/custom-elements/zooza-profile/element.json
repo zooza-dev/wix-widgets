@@ -10,7 +10,7 @@
     "defaultHeight": 250
   },
   "installation": {
-    "autoAddToSite": true
+    "autoAddToSite": false
   },
   "presets": [
     {

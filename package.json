@@ -12,6 +12,7 @@
     "@wix/secrets": "^1.0.44",
     "@wix/wix-ui-icons-common": "^3.0.34",
     "react-to-webcomponent": "^2.0.1",
+    "wix-location": "^1.0.1",
     "wix-secrets-backend": "^0.0.1-security"
   },
   "devDependencies": {

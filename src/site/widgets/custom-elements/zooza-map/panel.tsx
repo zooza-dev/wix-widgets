@@ -41,6 +41,7 @@ const Panel: FC = () => {
             setApiURL(selectedOption.value);
             widget.setProp("api-url", selectedOption.value);
         }
+        console.log("selectedApi", selectedOption);
     };
 
     return (
