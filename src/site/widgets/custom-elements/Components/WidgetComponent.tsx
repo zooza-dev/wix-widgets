@@ -50,7 +50,7 @@ export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_u
 
             // ✅ Create a new script tag for the widget
             const scriptTag = document.createElement("script");
-            scriptTag.id = `widget-script-${api_key}`;
+            scriptTag.id = `${api_key}`;
             scriptTag.setAttribute("data-version", version);
             scriptTag.setAttribute("data-widget-id", "zooza");
             scriptTag.setAttribute("data-zooza-api-url", finalApiUrl);
@@ -91,6 +91,35 @@ export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_u
 
         loadWidget();
     }, [api_key, version, type, finalApiUrl, retryCount,document.body.getAttribute("data-zooza-api-url")]);
+    useEffect(() => {
+        // ✅ Function to handle internal navigation manually
+        const handleAnchorClick = (event: Event) => {
+            const target = event.target as HTMLAnchorElement;
+            if (!target || target.tagName !== "A") return;
 
+            const href = target.getAttribute("href");
+            if (href && href.includes("#")) {
+                event.preventDefault(); // ⛔ Prevent default anchor behavior
+                console.log("🔄 Wix route change detected:", href);
+
+                const newUrl = new URL(href, window.location.origin);
+                window.history.pushState(null, "", newUrl.pathname + newUrl.hash);
+
+                // ✅ Manually trigger Wix navigation event
+                const wixRouteEvent = new CustomEvent("wix-route-change", {
+                    detail: { path: newUrl.pathname, hash: newUrl.hash }
+                });
+                window.dispatchEvent(wixRouteEvent);
+            }
+        };
+
+        // ✅ Attach event listener for clicks on links with `#`
+        document.addEventListener("click", handleAnchorClick);
+
+        return () => {
+            document.removeEventListener("click", handleAnchorClick);
+        };
+    }, []);
+    console.log("ola")
     return <div id="zooza-widget-container"></div>;
 };
