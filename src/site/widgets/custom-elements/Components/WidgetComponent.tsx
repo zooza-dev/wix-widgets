@@ -21,6 +21,16 @@ export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_u
         "#fix_email", '#create_payment_request', '#apply_code', '#remove_person', '#order'
     ]);
 
+    useEffect(() => {
+        if (!api_url) {
+            console.warn("⚠️ `api_url` is missing! Using fallback:", finalApiUrl);
+            if (window.location.hostname.endsWith(".co.uk")) {
+                setFinalApiUrl("https://uk.api.zooza.app");
+            }
+            setFinalApiUrl("https://api.zooza.app"); // ✅ Ensure it has a default value
+        }
+    }, [api_url]);
+
     // ✅ Detect route changes and force rerender
     useEffect(() => {
         const handleRouteChange = () => {
