@@ -6,18 +6,21 @@ import {
     Input,
     listItemSelectBuilder,
     SidePanel,
-    WixDesignSystemProvider
+    WixDesignSystemProvider,
+    Text
 } from "@wix/design-system";
 import "@wix/design-system/styles.global.css";
+
+
 
 const Panel: FC = () => {
     const [name, setName] = useState<string>("");
     const [apiURL, setApiURL] = useState<string>("https://api.zooza.app");
 
     useEffect(() => {
-        widget.getProp("display-name").then((name) => setName(name || "Zooza"));
+        widget.getProp("display-name").then((name) => setName(name || ""));
         widget.getProp("api-url").then((url) => setApiURL(url || "https://api.zooza.app")); // ✅ Set a valid default
-    }, []);
+    }, [setName, setApiURL]);
 
     // ✅ Define API options (Database Sections)
     const apis = [
@@ -43,22 +46,30 @@ const Panel: FC = () => {
         }
     };
 
+
     return (
         <WixDesignSystemProvider>
-            <SidePanel width="300" height={300}>
+            <SidePanel width="300">
                 <SidePanel.Content noPadding stretchVertically>
                     <SidePanel.Field>
-                        <FormField label="Api key">
-                            <Input
-                                type="text"
-                                value={name}
-                                onChange={(event) => {
-                                    const newName = event.target.value;
-                                    setName(newName);
-                                    widget.setProp("display-name", newName);
-                                }}
-                            />
-                        </FormField>
+                        {/* Flex container for the label and icon */}
+
+                        <Input
+                            type="text"
+                            value={name}
+                            placeholder="API Key"
+                            onChange={(event) => {
+                                const newName = event.target.value;
+                                setName(newName);
+                                widget.setProp("display-name", newName);
+                            }}
+                        />
+
+                        <Text size="tiny">
+                            To obtain your API key, go to the <a href="https://zooza.app" target="_blank" rel="noopener noreferrer">Zooza App</a>.
+                            <br/>
+                            If you are in the UK, visit <a href="https://uk.zooza.app" target="_blank" rel="noopener noreferrer">Zooza UK</a>.
+                        </Text>
                     </SidePanel.Field>
 
                     <SidePanel.Field>
@@ -71,6 +82,25 @@ const Panel: FC = () => {
                                 onSelect={(e) => onSelect(e.id as string)}
                             />
                         </FormField>
+                        <Text light secondary size="tiny">
+                            Choose the appropriate API section based on your location:
+                            <ul>
+                                <li><strong>Europe Union</strong> – for users located in the EU.</li>
+                                <li><strong>United Kingdom</strong> – for users in the UK.</li>
+                            </ul>
+                            Support for additional regions will be added soon.
+                            <br/><br/>
+                            <strong>Note:</strong> The <strong>Test Environment</strong> is for testing purposes only. The API key
+                            from Zooza will not function in this environment.
+                        </Text>
+                    </SidePanel.Field>
+                    <SidePanel.Field>
+                        <Text>
+                            Don't have a Zooza account?
+                            <a href="https://signup.zooza.online" target="_blank" rel="noopener noreferrer">
+                                Create one here.
+                            </a>
+                        </Text>
                     </SidePanel.Field>
                 </SidePanel.Content>
             </SidePanel>

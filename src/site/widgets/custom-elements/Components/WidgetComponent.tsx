@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import logo from "../../../../assets/logo_zooza.svg"
 
 type Props = {
     api_key: string;
@@ -49,11 +50,13 @@ export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_u
         window.addEventListener("wix-route-change", handleRouteChange);
         window.addEventListener("wix-query-change", handleRouteChange);
         window.addEventListener("hashchange", handleRouteChange);
+        window.addEventListener("popstate", handleRouteChange); // ✅ Added popstate listener
 
         return () => {
             window.removeEventListener("wix-route-change", handleRouteChange);
             window.removeEventListener("wix-query-change", handleRouteChange);
             window.removeEventListener("hashchange", handleRouteChange);
+            window.removeEventListener("popstate", handleRouteChange);
         };
     }, []);
 
@@ -78,26 +81,20 @@ export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_u
                 return;
             }
 
-            // 🗑️ Remove previous widget before adding a new one
             container.innerHTML = "";
-
-            // ✅ Remove old script to prevent duplication
             document.querySelectorAll("script[data-widget-id='zooza']").forEach((oldScript) => {
                 console.log("🗑️ Removing old widget script...");
                 oldScript.remove();
             });
 
-            // ✅ Create a new script tag for the widget
             const scriptTag = document.createElement("script");
             scriptTag.id = `${api_key}`;
             scriptTag.setAttribute("data-version", version);
             scriptTag.setAttribute("data-widget-id", "zooza");
             scriptTag.setAttribute("data-zooza-api-url", finalApiUrl);
             scriptTag.type = "text/javascript";
-
             container.appendChild(scriptTag);
 
-            // ✅ Load widget dynamically
             const widgetScript = document.createElement("script");
             widgetScript.type = "text/javascript";
             widgetScript.async = true;
@@ -106,7 +103,7 @@ export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_u
 
             widgetScript.onload = () => {
                 console.log("✅ Widget successfully loaded!");
-                setRetryCount(0); // Reset retry count on success
+                setRetryCount(0);
             };
 
             widgetScript.onerror = (err) => {
@@ -116,7 +113,6 @@ export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_u
 
             scriptTag.parentNode?.insertBefore(widgetScript, scriptTag.nextSibling);
 
-            // ✅ Check if widget appears, retry if needed
             setTimeout(() => {
                 if (!container.innerHTML.trim() && retryCount < MAX_RETRIES) {
                     console.warn(`⚠️ Widget not rendered, retrying... (${retryCount + 1}/${MAX_RETRIES})`);
@@ -161,6 +157,28 @@ export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_u
             document.removeEventListener("click", handleAnchorClick);
         };
     }, []);
+
+    if (api_key === "Zooza" || api_key === ""|| api_key === null|| api_key === undefined) {
+        return (
+            <div style={{
+                alignContent: "center",
+                textAlign: "center",
+                padding: '10px',
+                border: '1px solid red',
+                backgroundColor: '#ffe6e6',
+                borderRadius: '5px',
+                height: "90%"
+            }}>
+
+                <strong>API Key Not Configured!</strong>
+                <p>To activate this widget, please enter your API key in the settings.</p>
+                <p>Double-click on the widget or click the <strong>Settings</strong> button to open the configuration panel.</p>
+                <p>Once in settings, enter your API key to enable the widget.</p>
+                <img height={60} src={logo} alt="Zooza logo"/>
+
+            </div>
+        );
+    }
 
     return <div id="zooza-widget-container"></div>;
 };
