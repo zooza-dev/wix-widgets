@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import logo from "../../../../assets/logo_zooza.svg"
+import logo from "../../../../assets/logo_zooza.svg";
 
 type Props = {
     api_key: string;
@@ -11,15 +11,14 @@ type Props = {
 export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_url }) => {
     const [retryCount, setRetryCount] = useState(0);
     const [finalApiUrl, setFinalApiUrl] = useState(api_url || "https://api.zooza.app");
-    const [currentPath, setCurrentPath] = useState(window.location.pathname + window.location.search + window.location.hash);
+    const [currentPath, setCurrentPath] = useState(window.location.href);
 
-    // ✅ Hashes that should trigger a re-render
     const validHashes = new Set([
-        '#notifications', '#accept_waitlist', '#enroll', '#upcoming_notifications',
-        '#cancel_event', '#payment_response', '#generic_error', '#set_attendance',
-        '#confirm', '#registration_failed', '#email_sent', "#select_schedule",
-        "#change_schedule", '#reset', '#select_event', '#select_segment', '#add_person',
-        "#fix_email", '#create_payment_request', '#apply_code', '#remove_person', '#order'
+        "#notifications", "#accept_waitlist", "#enroll", "#upcoming_notifications",
+        "#cancel_event", "#payment_response", "#generic_error", "#set_attendance",
+        "#confirm", "#registration_failed", "#email_sent", "#select_schedule",
+        "#change_schedule", "#reset", "#select_event", "#select_segment", "#add_person",
+        "#fix_email", "#create_payment_request", "#apply_code", "#remove_person", "#order"
     ]);
 
     useEffect(() => {
@@ -28,17 +27,15 @@ export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_u
             if (window.location.hostname.endsWith(".co.uk")) {
                 setFinalApiUrl("https://uk.api.zooza.app");
             }
-            setFinalApiUrl("https://api.zooza.app"); // ✅ Ensure it has a default value
         }
     }, [api_url]);
 
-    // ✅ Detect route changes and force rerender
+    // ✅ Reload widget when browser navigation occurs
     useEffect(() => {
         const handleRouteChange = () => {
-            const newPath = window.location.pathname + window.location.search + window.location.hash;
+            const newPath = window.location.href;
             console.log("🔄 URL Changed, forcing widget reload:", newPath);
 
-            // ✅ Ensure only specific `#hash` values trigger a reload
             if (window.location.hash && !validHashes.has(window.location.hash)) {
                 console.log("⚠️ Ignoring unrelated hash change:", window.location.hash);
                 return;
@@ -47,25 +44,25 @@ export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_u
             setCurrentPath(newPath);
         };
 
+        window.addEventListener("popstate", handleRouteChange);
+        window.addEventListener("hashchange", handleRouteChange);
         window.addEventListener("wix-route-change", handleRouteChange);
         window.addEventListener("wix-query-change", handleRouteChange);
-        window.addEventListener("hashchange", handleRouteChange);
-        window.addEventListener("popstate", handleRouteChange); // ✅ Added popstate listener
 
         return () => {
+            window.removeEventListener("popstate", handleRouteChange);
+            window.removeEventListener("hashchange", handleRouteChange);
             window.removeEventListener("wix-route-change", handleRouteChange);
             window.removeEventListener("wix-query-change", handleRouteChange);
-            window.removeEventListener("hashchange", handleRouteChange);
-            window.removeEventListener("popstate", handleRouteChange);
         };
     }, []);
 
-    // ✅ Load widget when the path (including query and hash) changes
+    // ✅ Reload widget when `currentPath` updates
     useEffect(() => {
         const MAX_RETRIES = 3;
 
         const loadWidget = () => {
-            console.log(`🔄 Attempting to load widget (Try ${retryCount + 1}/${MAX_RETRIES})`);
+            console.log(`🔄 Loading widget (Attempt ${retryCount + 1}/${MAX_RETRIES})`);
             console.log("API Key:", api_key);
             console.log("API URL:", finalApiUrl);
             console.log("Current Path:", currentPath);
@@ -98,8 +95,7 @@ export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_u
             const widgetScript = document.createElement("script");
             widgetScript.type = "text/javascript";
             widgetScript.async = true;
-            document.body.setAttribute("data-zooza-api-url", finalApiUrl);
-            widgetScript.src = `${finalApiUrl}/widgets/${version}/?type=${type}&ref=${encodeURIComponent(currentPath)}&v=${new Date().getTime()}`;
+            widgetScript.src = `${finalApiUrl}/widgets/${version}/?type=${type}&ref=${encodeURIComponent(currentPath)}&v=${Date.now()}`;
 
             widgetScript.onload = () => {
                 console.log("✅ Widget successfully loaded!");
@@ -126,33 +122,28 @@ export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_u
         loadWidget();
     }, [currentPath, retryCount]);
 
-    // ✅ Handle navigation manually for both `#hash` and `?query` changes
+    // ✅ Manually handle anchor (`<a href="#xyz">`) clicks to trigger widget reload
     useEffect(() => {
-        // ✅ Function to handle internal navigation manually
         const handleAnchorClick = (event: Event) => {
             const target = event.target as HTMLAnchorElement;
             if (!target || target.tagName !== "A") return;
 
             const href = target.getAttribute("href");
             if (href && href.includes("#")) {
-                event.preventDefault(); // ⛔ Prevent default anchor behavior
+                event.preventDefault();
                 console.log("🔄 Wix route change detected:", href);
 
                 const newUrl = new URL(href, window.location.origin);
                 window.history.pushState(null, "", newUrl.pathname + newUrl.hash);
 
-                // ✅ Manually trigger Wix navigation event
                 const wixRouteEvent = new CustomEvent("wix-route-change", {
                     detail: { path: newUrl.pathname, hash: newUrl.hash }
                 });
                 window.dispatchEvent(wixRouteEvent);
             }
-            else return;
         };
 
-        // ✅ Attach event listener for clicks on links with #
         document.addEventListener("click", handleAnchorClick);
-
         return () => {
             document.removeEventListener("click", handleAnchorClick);
         };
@@ -169,13 +160,11 @@ export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_u
                 borderRadius: '5px',
                 height: "90%"
             }}>
-
                 <strong>API Key Not Configured!</strong>
                 <p>To activate this widget, please enter your API key in the settings.</p>
                 <p>Double-click on the widget or click the <strong>Settings</strong> button to open the configuration panel.</p>
                 <p>Once in settings, enter your API key to enable the widget.</p>
                 <img height={60} src={logo} alt="Zooza logo"/>
-
             </div>
         );
     }
