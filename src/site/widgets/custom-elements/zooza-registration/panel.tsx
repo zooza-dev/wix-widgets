@@ -52,23 +52,27 @@ const Panel: FC = () => {
         <SidePanel width="300">
           <SidePanel.Content noPadding stretchVertically>
             <SidePanel.Field>
-              {/* Flex container for the label and icon */}
-
-              <Input
-                  type="text"
-                  value={name}
-                  placeholder="API Key"
-                  onChange={(event) => {
-                    const newName = event.target.value;
-                    setName(newName);
-                    widget.setProp("display-name", newName);
-                  }}
-              />
+              <FormField label="API Key">
+                <Input
+                    type="text"
+                    value={name}
+                    placeholder="Enter your Zooza API key"
+                    onChange={(event) => {
+                      const newName = event.target.value;
+                      setName(newName);
+                      widget.setProp("display-name", newName);
+                    }}
+                />
+              </FormField>
 
               <Text size="tiny">
-                To obtain your API key, go to the <a href="https://zooza.app" target="_blank" rel="noopener noreferrer">Zooza App</a>.
-                <br/>
-                If you are in the UK, visit <a href="https://uk.zooza.app" target="_blank" rel="noopener noreferrer">Zooza UK</a>.
+                To obtain your API key, go to the&nbsp;
+                <a href="https://zooza.app" target="_blank" rel="noopener noreferrer">Zooza App</a>.<br/>
+                If you are in the UK, visit&nbsp;
+                <a href="https://uk.zooza.app" target="_blank" rel="noopener noreferrer">Zooza UK</a>.<br/><br/>
+                In Zooza, go to the <strong>Publish</strong> section. In the <strong>Widgets</strong> card, you’ll find a list of widgets.<br/>
+                Click on the widget you want to add to your Wix site, choose <strong>Integration: WiX</strong>, and copy the API key shown.<br/>
+                Paste it into the input field above.
               </Text>
             </SidePanel.Field>
 

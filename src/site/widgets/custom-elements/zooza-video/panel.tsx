@@ -66,9 +66,13 @@ const Panel: FC = () => {
               />
 
               <Text size="tiny">
-                To obtain your API key, go to the <a href="https://zooza.app" target="_blank" rel="noopener noreferrer">Zooza App</a>.
-                <br/>
-                If you are in the UK, visit <a href="https://uk.zooza.app" target="_blank" rel="noopener noreferrer">Zooza UK</a>.
+                To obtain your API key, go to the&nbsp;
+                <a href="https://zooza.app" target="_blank" rel="noopener noreferrer">Zooza App</a>.<br/>
+                If you are in the UK, visit&nbsp;
+                <a href="https://uk.zooza.app" target="_blank" rel="noopener noreferrer">Zooza UK</a>.<br/><br/>
+                Go to the <strong>Publish</strong> section. In the <strong>Widgets</strong> card, you’ll find a list of widgets.
+                Click on the widget you want to add to your Wix site, choose <strong>Integration: WiX</strong>, and copy the API key shown.
+                Paste it in the input field above.
               </Text>
             </SidePanel.Field>
 

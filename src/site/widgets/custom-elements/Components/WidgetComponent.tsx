@@ -71,6 +71,10 @@ export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_u
                 console.error("❌ Missing API key or API URL. Widget cannot be loaded.");
                 return;
             }
+            const bodyApiUrl = document.body.getAttribute('data-zooza-api-url');
+            if(bodyApiUrl !== finalApiUrl){
+                document.body.setAttribute('data-zooza-api-url', finalApiUrl);
+            }
 
             const container = document.getElementById("zooza-widget-container");
             if (!container) {
