@@ -20,6 +20,13 @@ export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_u
         "#change_schedule", "#reset", "#select_event", "#select_segment", "#add_person",
         "#fix_email", "#create_payment_request", "#apply_code", "#remove_person", "#order"
     ]);
+    const isEditorMode = window.location.pathname.includes('/services/');
+
+
+console.log("is editor: ", window.location.pathname)
+    console.log("is editor: ", isEditorMode)
+
+
 
     useEffect(() => {
         if (!api_url) {
@@ -172,6 +179,29 @@ export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_u
             </div>
         );
     }
+    if (isEditorMode) {
+       return <>
+            <div style={{
+                alignContent: "center",
+                textAlign: "center",
+                padding: '8px',
+                marginBottom: '8px',
+                border: '1px dashed #bbb',
+                backgroundColor: '#fafafa',
+                borderRadius: '5px'
+            }}>
+                <strong>Widget Preview</strong>
+                <p>The Zooza widget may not display correctly in the editor. It will work properly after publishing.</p>
+                <img height={40} src={logo} alt="Zooza logo"/>
+            </div>
+            <div id="zooza-widget-container"></div>
+        </>
 
-    return <div id="zooza-widget-container"></div>;
+    }
+
+    return (
+        <>
+            <div id="zooza-widget-container"></div>
+        </>
+    );
 };
