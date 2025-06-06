@@ -19,7 +19,7 @@
     "@types/react": "^16.0.0",
     "@types/react-dom": "^16.0.0",
     "@wix/cli": "^1.1.72",
-    "@wix/cli-app": "^1.1.72",
+    "@wix/cli-app": "1.1.72",
     "react": "16.14.0",
     "react-dom": "16.14.0",
     "typescript": "^5.3.3",

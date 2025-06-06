@@ -194,6 +194,11 @@ console.log("is editor: ", window.location.pathname)
                 <p>The Zooza widget may not display correctly in the editor. It will work properly after publishing.</p>
                 <img height={40} src={logo} alt="Zooza logo"/>
             </div>
+           <style>{`
+                .zooza_branding{
+                 display:none !important;
+            }`}
+           </style>
             <div id="zooza-widget-container"></div>
         </>
 
@@ -203,7 +208,7 @@ console.log("is editor: ", window.location.pathname)
         <>
             <style>{`
                 .zooza_branding{
-                 display:none
+                 display:none !important;
             }`}
             </style>
             <div id="zooza-widget-container"></div>
