@@ -201,6 +201,11 @@ console.log("is editor: ", window.location.pathname)
 
     return (
         <>
+            <style>{`
+                .zooza_branding{
+                 display:none
+            }`}
+            </style>
             <div id="zooza-widget-container"></div>
         </>
     );
