@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import logo from "../../../../assets/logo_zooza.svg";
 
 type Props = {
@@ -9,158 +9,73 @@ type Props = {
 };
 
 export const WidgetComponent: React.FC<Props> = ({ api_key, version, type, api_url }) => {
-    const [retryCount, setRetryCount] = useState(0);
-    const [finalApiUrl, setFinalApiUrl] = useState(api_url || "https://api.zooza.app");
-    const [currentPath, setCurrentPath] = useState(window.location.href);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const initializedRef = useRef(false);
 
-    const validHashes = new Set([
-        "#notifications", "#accept_waitlist", "#enroll", "#upcoming_notifications",
-        "#cancel_event", "#payment_response", "#generic_error", "#set_attendance",
-        "#confirm", "#registration_failed", "#email_sent", "#select_schedule",
-        "#change_schedule", "#reset", "#select_event", "#select_segment", "#add_person",
-        "#fix_email", "#create_payment_request", "#apply_code", "#remove_person", "#order"
-    ]);
     const isEditorMode = window.location.pathname.includes('/services/');
 
+    const resolvedApiUrl = api_url ||
+        (window.location.hostname.endsWith(".co.uk") ? "https://uk.api.zooza.app" : "https://api.zooza.app");
 
-console.log("is editor: ", window.location.pathname)
-    console.log("is editor: ", isEditorMode)
-
-
-
+    // Load widget — deferred by one tick so all attribute-to-prop updates from
+    // react-to-webcomponent settle before we load the script.
+    // When props change rapidly (Wix sets display-name, then api-url), each render
+    // cancels the previous pending timer via cleanup, so only the final render loads.
     useEffect(() => {
-        if (!api_url) {
-            console.warn("⚠️ `api_url` is missing! Using fallback:", finalApiUrl);
-            if (window.location.hostname.endsWith(".co.uk")) {
-                setFinalApiUrl("https://uk.api.zooza.app");
-            }
-        }
-    }, [api_url]);
+        if (initializedRef.current) return;
+        const container = containerRef.current;
+        if (!container) return;
+        if (!api_key || api_key === "Zooza") return;
 
-    // ✅ Reload widget when browser navigation occurs
-    useEffect(() => {
-        const handleRouteChange = () => {
-            const newPath = window.location.href;
-            console.log("🔄 URL Changed, forcing widget reload:", newPath);
+        const timer = setTimeout(() => {
+            if (initializedRef.current) return;
+            initializedRef.current = true;
 
-            if (window.location.hash && !validHashes.has(window.location.hash)) {
-                console.log("⚠️ Ignoring unrelated hash change:", window.location.hash);
-                return;
-            }
+            // Reset v2 widget init guard
+            delete (document as any).zooza_initialised;
 
-            setCurrentPath(newPath);
-        };
+            // Set API URL on body for widgets that read it
+            document.body.setAttribute('data-zooza-api-url', resolvedApiUrl);
 
-        window.addEventListener("popstate", handleRouteChange);
-        window.addEventListener("hashchange", handleRouteChange);
-        window.addEventListener("wix-route-change", handleRouteChange);
-        window.addEventListener("wix-query-change", handleRouteChange);
-
-        return () => {
-            window.removeEventListener("popstate", handleRouteChange);
-            window.removeEventListener("hashchange", handleRouteChange);
-            window.removeEventListener("wix-route-change", handleRouteChange);
-            window.removeEventListener("wix-query-change", handleRouteChange);
-        };
-    }, []);
-
-    // ✅ Reload widget when `currentPath` updates
-    useEffect(() => {
-        const MAX_RETRIES = 3;
-
-        const loadWidget = () => {
-            console.log(`🔄 Loading widget (Attempt ${retryCount + 1}/${MAX_RETRIES})`);
-            console.log("API Key:", api_key);
-            console.log("API URL:", finalApiUrl);
-            console.log("Current Path:", currentPath);
-
-            if (!api_key || !finalApiUrl) {
-                console.error("❌ Missing API key or API URL. Widget cannot be loaded.");
-                return;
-            }
-            const bodyApiUrl = document.body.getAttribute('data-zooza-api-url');
-            if(bodyApiUrl !== finalApiUrl){
-                document.body.setAttribute('data-zooza-api-url', finalApiUrl);
-            }
-
-            const container = document.getElementById("zooza-widget-container");
-            if (!container) {
-                console.error("❌ Widget container not found!");
-                return;
-            }
-
-            container.innerHTML = "";
-            document.querySelectorAll("script[data-widget-id='zooza']").forEach((oldScript) => {
-                console.log("🗑️ Removing old widget script...");
-                oldScript.remove();
-            });
-
+            // Metadata script tag — v1/v2 widgets find this via [data-widget-id="zooza"]
             const scriptTag = document.createElement("script");
-            scriptTag.id = `${api_key}`;
+            scriptTag.id = api_key;
             scriptTag.setAttribute("data-version", version);
             scriptTag.setAttribute("data-widget-id", "zooza");
-            scriptTag.setAttribute("data-zooza-api-url", finalApiUrl);
+            scriptTag.setAttribute("data-zooza-api-url", resolvedApiUrl);
             scriptTag.type = "text/javascript";
             container.appendChild(scriptTag);
 
+            // Widget loader script
             const widgetScript = document.createElement("script");
             widgetScript.type = "text/javascript";
             widgetScript.async = true;
-            widgetScript.src = `${finalApiUrl}/widgets/${version}/?type=${type}&ref=${encodeURIComponent(currentPath)}&v=${Date.now()}`;
+            widgetScript.src = `${resolvedApiUrl}/widgets/${version}/?type=${type}&ref=${encodeURIComponent(window.location.href)}&v=${Date.now()}`;
 
-            widgetScript.onload = () => {
-                console.log("✅ Widget successfully loaded!");
-                setRetryCount(0);
-            };
-
+            widgetScript.onload = () => console.log("✅ Widget loaded:", type);
             widgetScript.onerror = (err) => {
-                console.error("❌ Failed to load widget script:", err);
-                console.warn("⚠️ API URL issue detected:", finalApiUrl);
+                console.error("❌ Widget script failed:", err);
+                initializedRef.current = false;
             };
 
             scriptTag.parentNode?.insertBefore(widgetScript, scriptTag.nextSibling);
+        }, 0);
 
-            setTimeout(() => {
-                if (!container.innerHTML.trim() && retryCount < MAX_RETRIES) {
-                    console.warn(`⚠️ Widget not rendered, retrying... (${retryCount + 1}/${MAX_RETRIES})`);
-                    setRetryCount((prev) => prev + 1);
-                } else if (retryCount >= MAX_RETRIES) {
-                    console.error("❌ Max retries reached. Widget failed to load.");
-                }
-            }, 1500);
-        };
+        // If props change before the timer fires, cancel and let the next render try
+        return () => clearTimeout(timer);
+    }, [api_key, version, type, resolvedApiUrl]);
 
-        loadWidget();
-    }, [currentPath, retryCount]);
-
-    // ✅ Manually handle anchor (`<a href="#xyz">`) clicks to trigger widget reload
+    // Cleanup only on actual component unmount (empty deps = mount/unmount only)
     useEffect(() => {
-        const handleAnchorClick = (event: Event) => {
-            const target = event.target as HTMLAnchorElement;
-            if (!target || target.tagName !== "A") return;
-
-            const href = target.getAttribute("href");
-            if (href && href.includes("#")) {
-                event.preventDefault();
-                console.log("🔄 Wix route change detected:", href);
-
-                const newUrl = new URL(href, window.location.origin);
-                window.history.pushState(null, "", newUrl.pathname + newUrl.hash);
-
-                const wixRouteEvent = new CustomEvent("wix-route-change", {
-                    detail: { path: newUrl.pathname, hash: newUrl.hash }
-                });
-                window.dispatchEvent(wixRouteEvent);
-            }
-        };
-
-        document.addEventListener("click", handleAnchorClick);
         return () => {
-            document.removeEventListener("click", handleAnchorClick);
+            const container = containerRef.current;
+            if (container) container.innerHTML = "";
+            initializedRef.current = false;
+            delete (document as any).zooza_initialised;
         };
     }, []);
 
-    if (api_key === "Zooza" || api_key === ""|| api_key === null|| api_key === undefined) {
+    if (api_key === "Zooza" || api_key === "" || api_key === null || api_key === undefined) {
         return (
             <div style={{
                 alignContent: "center",
@@ -180,7 +95,7 @@ console.log("is editor: ", window.location.pathname)
         );
     }
     if (isEditorMode) {
-       return <>
+        return <>
             <div style={{
                 alignContent: "center",
                 textAlign: "center",
@@ -194,14 +109,13 @@ console.log("is editor: ", window.location.pathname)
                 <p>The Zooza widget may not display correctly in the editor. It will work properly after publishing.</p>
                 <img height={40} src={logo} alt="Zooza logo"/>
             </div>
-           <style>{`
+            <style>{`
                 .zooza_branding{
                  display:none !important;
             }`}
-           </style>
-            <div id="zooza-widget-container"></div>
+            </style>
+            <div ref={containerRef}></div>
         </>
-
     }
 
     return (
@@ -211,7 +125,7 @@ console.log("is editor: ", window.location.pathname)
                  display:none !important;
             }`}
             </style>
-            <div id="zooza-widget-container"></div>
+            <div ref={containerRef}></div>
         </>
     );
 };

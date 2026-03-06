@@ -4,25 +4,24 @@
   "private": true,
   "dependencies": {
     "@tanstack/react-query": "^4.36.1",
-    "@wix/app-management": "^1.0.0",
-    "@wix/design-system": "^1.111.0",
-    "@wix/editor": "^1.338.0",
-    "@wix/essentials": "^0.1.14",
-    "@wix/sdk": "^1.15.10",
-    "@wix/secrets": "^1.0.44",
-    "@wix/wix-ui-icons-common": "^3.0.34",
+    "@wix/app-management": "^1.0.145",
+    "@wix/design-system": "^1.259.1",
+    "@wix/editor": "^1.438.0",
+    "@wix/essentials": "^1.0.6",
+    "@wix/sdk": "^1.21.3",
+    "@wix/secrets": "^1.0.70",
+    "@wix/wix-ui-icons-common": "^3.141.1",
     "react-to-webcomponent": "^2.0.1",
-    "wix-location": "^1.0.1",
-    "wix-secrets-backend": "^0.0.1-security"
+    "wix-location": "^1.0.1"
   },
   "devDependencies": {
     "@types/react": "^16.0.0",
     "@types/react-dom": "^16.0.0",
-    "@wix/cli": "^1.1.72",
-    "@wix/cli-app": "1.1.72",
+    "@wix/cli": "^1.1.166",
+    "@wix/cli-app": "1.1.166",
     "react": "16.14.0",
     "react-dom": "16.14.0",
-    "typescript": "^5.3.3",
+    "typescript": "^5.8.3",
     "vite": "6.2.6"
   },
   "scripts": {
